@@ -7,17 +7,16 @@
 # OS_MAC
 
 # ----------------- Linux ---------------------------------------------
-CFLAGS = -Wall -O2 -DOS_LINUX -I/usr/include/freetype2
-LDFLAGS = -lGL -lGLU -lSDL -lSDL_image -lSDL_mixer -lfreetype 
+# CFLAGS = -Wall -O2 -DOS_LINUX -I/usr/include/freetype2
+# LDFLAGS = -lGL -lGLU -lSDL -lSDL_image -lSDL_mixer -lfreetype
 
 # ----------------- Windows with mingw --------------------------------
 # CFLAGS = -Wall -O2 -DOS_WIN32_MINGW -mwindows -I/usr/include/freetype2
 # LDFLAGS = -lfreeglut -lopengl32 -lGLU32 -lSDL -lSDL_image -lSDL_mixer -lfreetype
 
 # ----------------- Windows, erins mingw environment ;-) --------------
-# CFLAGS = -Wall -O2 -DOS_WIN32_MINGW -Ic:/mingw/include/freetype2
-# LDFLAGS = -Lc:/mingw/lib/sdl -lmingw32 -mwindows -lSDLmain -lSDL -lopengl32 -lglu32 \
-# -l:SDL_image.lib -l:SDL_mixer.lib -lfreetype
+CFLAGS = -Wall -O2 -DOS_WIN32_MINGW -Ic:/mingw/include/freetype2
+LDFLAGS = -Lc:/mingw/lib -lmingw32 -mwindows -lSDLmain -lSDL -lopengl32 -lglu32 -l:SDL_image.lib -l:SDL_mixer.lib -lfreetype
 
 # ----------------- Windows native ------------------------------------
 # CFLAGS = -Wall -O2 -DOS_WIN32_NATIVE .....
