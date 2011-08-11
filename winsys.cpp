@@ -24,6 +24,7 @@ GNU General Public License for more details.
 #include "textures.h"
 
 #define USE_JOYSTICK true
+#define USE_KINECT true
 
 CWinsys Winsys;
 
@@ -38,6 +39,7 @@ CWinsys::CWinsys () {
 		modefuncs[i].motion = NULL;
 		modefuncs[i].jaxis  = NULL;
 		modefuncs[i].jbutt  = NULL;
+		modefuncs[i].knct   = NULL;
 	}
 	new_mode = NO_MODE;
 	lasttick = 0;
@@ -45,6 +47,9 @@ CWinsys::CWinsys () {
 	joystick = NULL;
 	numJoysticks = 0;
 	joystick_active = false;
+
+	kinect = NULL;
+	kinect_active = false;
 
  	resolution[0] = MakeRes (0, 0);
 	resolution[1] = MakeRes (800, 600);
@@ -166,6 +171,18 @@ void CWinsys::InitJoystick () {
 	joystick_active = true;
 }
 
+void CWinsys::InitKinect() {
+	kinect = new CKinect();
+	
+	if (!kinect->StartServer()) {
+		delete kinect;
+		kinect = NULL;
+		return;
+	}
+	
+	kinect_active = true;
+}
+
 void CWinsys::Init () {
     Uint32 sdl_flags = SDL_INIT_VIDEO | SDL_INIT_NOPARACHUTE | SDL_INIT_TIMER;
     if (SDL_Init (sdl_flags) < 0) Message ("Could not initialize SDL");
@@ -181,6 +198,7 @@ void CWinsys::Init () {
     SDL_WM_SetCaption (WINDOW_TITLE, WINDOW_TITLE);
 	KeyRepeat (false);
 	if (USE_JOYSTICK) InitJoystick ();
+	if (USE_KINECT) InitKinect();
 //	SDL_EnableUNICODE (1);
 }
 
@@ -202,8 +220,19 @@ void CWinsys::CloseJoystick () {
 	if (joystick_active) SDL_JoystickClose (joystick);	
 }
 
+void CWinsys::CloseKinect() {
+	if (kinect_active) {
+		kinect->StopServer();
+		delete kinect;
+		kinect = NULL;
+		
+		kinect_active = false;
+	}
+}
+
 void CWinsys::Quit () {
 	CloseJoystick ();
+	CloseKinect ();
 	Tex.FreeTextureList ();
 	Course.FreeCourseList ();
 	Course.ResetCourse ();
@@ -246,6 +275,10 @@ void CWinsys::SetModeFuncs (
     modefuncs[mode].keyb_spec = keyb_spec;
 }
 
+void CWinsys::SetKinectFuncN (TGameMode mode, TKnctFuncN knct) {
+	modefuncs[mode].knct = knct;
+}
+
 void CWinsys::IdleFunc () {}
 
 bool CWinsys::ModePending () {
@@ -265,7 +298,7 @@ void CWinsys::PollEvent () {
 	SDL_keysym sym;
     unsigned int key, axis;
     int x, y;
-	float val;
+	float val, val2;
 
 	while (SDL_PollEvent (&event)) {
 		if (ModePending()) {
@@ -334,6 +367,15 @@ void CWinsys::PollEvent () {
 					SetupVideoMode (param.res_type);
 					Reshape (event.resize.w, event.resize.h);
 				break;
+				
+				case SDL_USEREVENT:
+					val = *(float *) event.user.data1;
+					val2 = *(float *) event.user.data2;
+					
+					if (modefuncs[g_game.mode].knct) {
+						(modefuncs[g_game.mode].knct) (val, val2);
+					}
+					break;
 			
 				case SDL_QUIT: 
 					Quit ();

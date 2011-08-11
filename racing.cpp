@@ -36,6 +36,8 @@ GNU General Public License for more details.
 
 static bool right_turn;
 static bool left_turn;
+static bool kinect_turn;
+static float kinect_turnfact;
 static bool stick_turn;
 static double stick_turnfact;
 static bool key_paddling;
@@ -97,6 +99,14 @@ void RacingKeys (unsigned int key, bool special, bool release, int x, int y) {
 		case SDLK_F7: if (!release) terr = !terr; break;
 		case SDLK_F8: if (!release) trees = !trees; break;
 	}
+}
+
+void KinectMotion (float xvalue, float zvalue) {
+	kinect_turn = true;
+	kinect_turnfact = xvalue;
+	
+	stick_braking = (zvalue > 1.4f);
+	stick_paddling = (zvalue < 1.2f);
 }
 
 void RacingJoyAxis (int axis, double value) {
@@ -212,6 +222,10 @@ void CalcSteeringControls (CControl *ctrl, double time_step) {
 	if (stick_turn) {
 		ctrl->turn_fact = stick_turnfact; 
 		ctrl->turn_animation += ctrl->turn_fact * 2 * time_step;
+		ctrl->turn_animation = min (1.0, max (-1.0, ctrl->turn_animation));
+	} else if (kinect_turn) {
+		ctrl->turn_fact = kinect_turnfact;
+		ctrl->turn_animation += ctrl->turn_fact * 5 * time_step;
 		ctrl->turn_animation = min (1.0, max (-1.0, ctrl->turn_animation));
 	} else if (left_turn ^ right_turn) {
 		if (left_turn) ctrl->turn_fact = -1.0;
@@ -352,4 +366,5 @@ static void racing_term() {
 void racing_register(){
 	Winsys.SetModeFuncs (RACING, racing_init, racing_loop, racing_term,
  		RacingKeys, NULL, NULL, RacingJoyAxis, RacingJoyButton, NULL);
+	Winsys.SetKinectFuncN (RACING, KinectMotion);
 }

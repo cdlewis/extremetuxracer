@@ -19,6 +19,7 @@ GNU General Public License for more details.
 #define WINSYS_H
 
 #include "bh.h"
+#include "kinect.h"
 
 #define NUM_RESOLUTIONS 10
 
@@ -31,6 +32,7 @@ typedef void (*TKeybFuncN)    (unsigned int key, bool special, bool release, int
 typedef void (*TJAxisFuncN)   (int axis, double value);
 typedef void (*TJButtFuncN)   (int button, int state);
 typedef void (*TKeybFuncS)    (SDL_keysym sym, bool release);
+typedef void (*TKnctFuncN)    (float xaxis, float zaxis);
 
 typedef struct {
 	TInitFuncN   init; 
@@ -42,6 +44,7 @@ typedef struct {
 	TJAxisFuncN  jaxis;
 	TJButtFuncN  jbutt;
 	TKeybFuncS   keyb_spec;
+	TKnctFuncN   knct;
 } TModeFuncsN;
 
 class CWinsys {
@@ -57,6 +60,10 @@ private:
 	SDL_Joystick *joystick;	
 	int numJoysticks;
 	bool joystick_active;
+
+	// kinect
+	CKinect *kinect;
+	bool kinect_active;
 
 	// sdl window
  	TScreenRes resolution[NUM_RESOLUTIONS];
@@ -92,10 +99,13 @@ public:
 	void Quit ();
 	void InitJoystick ();
 	void CloseJoystick ();
+	void InitKinect ();
+	void CloseKinect();
 	void SetModeFuncs (
 			TGameMode mode, TInitFuncN init, TLoopFuncN loop, TTermFuncN term,
 			TKeybFuncN keyb, TMouseFuncN mouse, TMotionFuncN motion,
  			TJAxisFuncN jaxis, TJButtFuncN jbutt, TKeybFuncS keyb_spec);
+	void SetKinectFuncN (TGameMode mode, TKnctFuncN knct);
 	void EventLoop ();
 	void SetMode (TGameMode mode) {new_mode = mode;}
 	bool ModePending ();
