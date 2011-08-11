@@ -63,7 +63,6 @@ private:
 
 	// kinect
 	CKinect *kinect;
-	bool kinect_active;
 
 	// sdl window
  	TScreenRes resolution[NUM_RESOLUTIONS];

@@ -49,7 +49,6 @@ CWinsys::CWinsys () {
 	joystick_active = false;
 
 	kinect = NULL;
-	kinect_active = false;
 
  	resolution[0] = MakeRes (0, 0);
 	resolution[1] = MakeRes (800, 600);
@@ -179,8 +178,6 @@ void CWinsys::InitKinect() {
 		kinect = NULL;
 		return;
 	}
-	
-	kinect_active = true;
 }
 
 void CWinsys::Init () {
@@ -221,12 +218,10 @@ void CWinsys::CloseJoystick () {
 }
 
 void CWinsys::CloseKinect() {
-	if (kinect_active) {
+	if (kinect) {
 		kinect->StopServer();
 		delete kinect;
 		kinect = NULL;
-		
-		kinect_active = false;
 	}
 }
 
