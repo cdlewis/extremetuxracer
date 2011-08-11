@@ -10,9 +10,9 @@ using System.Windows;
 [assembly: AssemblyTitle("KinectDaemon")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("Matt Rajca")]
 [assembly: AssemblyProduct("KinectDaemon")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCopyright("Copyright © Matt Rajca 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

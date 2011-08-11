@@ -99,7 +99,7 @@ public:
 	void InitJoystick ();
 	void CloseJoystick ();
 	void InitKinect ();
-	void CloseKinect();
+	void CloseKinect ();
 	void SetModeFuncs (
 			TGameMode mode, TInitFuncN init, TLoopFuncN loop, TTermFuncN term,
 			TKeybFuncN keyb, TMouseFuncN mouse, TMotionFuncN motion,
