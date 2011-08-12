@@ -93,10 +93,14 @@ namespace KinectDaemon
 					}
 					
 					Ellipse ellipse = new Ellipse();
-					ellipse.Width = ellipse.Height = 48;
+					ellipse.Width = ellipse.Height = 32;
 					ellipse.Fill = new SolidColorBrush(circleColor);
 					
-					Canvas.SetLeft(ellipse, 240 - 24 + posXScaled);
+					Canvas.SetLeft(ellipse, 240 - 16 + posXScaled);
+					
+					int y = (Math.Min(Math.Max(posZScaled, 120), 140)- 120) * 4;
+					Canvas.SetTop(ellipse, y);
+					
 					canvas1.Children.Add(ellipse);
 					
 					PacketK packet = new PacketK()
