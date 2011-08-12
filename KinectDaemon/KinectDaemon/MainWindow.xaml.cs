@@ -29,16 +29,13 @@ namespace KinectDaemon
 	
 	public partial class MainWindow : Window
 	{
-		Runtime runtime = null;
+		Runtime runtime = new Runtime();
 		DispatcherTimer timer = null;
 		UdpClient client = null;
-		int lastTrackingIndex = -1;
 		
 		public MainWindow()
 		{
 			InitializeComponent();
-			
-			runtime = new Runtime();
 		}
 		
 		static byte[] StructureToByteArray(object obj)
@@ -54,12 +51,12 @@ namespace KinectDaemon
 			return array;
 		}
 		
-		public static void result(IAsyncResult ar)
+		public static void SendResult(IAsyncResult ar)
 		{
 			
 		}
 		
-		void timer_Tick(object sender, EventArgs e)
+		void Timer_Tick(object sender, EventArgs e)
 		{
 			SkeletonFrame frame = runtime.SkeletonEngine.GetNextFrame(0);
 			
@@ -70,28 +67,17 @@ namespace KinectDaemon
 			{
 				if (skeleton.TrackingState == SkeletonTrackingState.Tracked)
 				{
-					// filter out people in the background
-					if (lastTrackingIndex == -1)
-					{
-						lastTrackingIndex = skeleton.TrackingID;
-					}
-					else if (skeleton.TrackingID != lastTrackingIndex)
-					{
-						continue;
-					}
-					
 					Joint head = skeleton.Joints[JointID.Head];
 					
 					if (head.TrackingState != JointTrackingState.Tracked)
 						return;
 					
-					float posX = head.Position.X;
-					int posXScaled = (int) (posX * 200);
-					int posZScaled = (int) (head.Position.Z * 100);
+					int posXScaled = (int)(head.Position.X * 200);
+					int posZScaled = (int)(head.Position.Z * 100);
 					
 					canvas1.Children.Clear();
 					
-					Color circleColor = Colors.Green;
+					Color circleColor;
 					
 					if (posZScaled > 140)
 					{
@@ -101,12 +87,16 @@ namespace KinectDaemon
 					{
 						circleColor = Colors.Blue;
 					}
+					else
+					{
+						circleColor = Colors.Green;
+					}
 					
 					Ellipse ellipse = new Ellipse();
-					ellipse.Width = ellipse.Height = 64;
+					ellipse.Width = ellipse.Height = 48;
 					ellipse.Fill = new SolidColorBrush(circleColor);
 					
-					Canvas.SetLeft(ellipse, 289 - 32 + posXScaled);
+					Canvas.SetLeft(ellipse, 240 - 24 + posXScaled);
 					canvas1.Children.Add(ellipse);
 					
 					PacketK packet = new PacketK()
@@ -116,7 +106,7 @@ namespace KinectDaemon
 					};
 					
 					byte[] bytes = StructureToByteArray(packet);
-					client.BeginSend(bytes, bytes.Length, new AsyncCallback(result), null);
+					client.BeginSend(bytes, bytes.Length, new AsyncCallback(SendResult), null);
 					
 					return;
 				}
@@ -133,12 +123,14 @@ namespace KinectDaemon
 			
 			timer = new DispatcherTimer();
 			timer.Interval = TimeSpan.FromMilliseconds(1000 / 10); // 1/10 of a second
-			timer.Tick += new EventHandler(timer_Tick);
+			timer.Tick += new EventHandler(Timer_Tick);
 			timer.Start();
 		}
 		
 		private void Window_Closed(object sender, EventArgs e)
 		{
+			timer.Stop();
+			client.Close();
 			runtime.Uninitialize();
 		}
 	}

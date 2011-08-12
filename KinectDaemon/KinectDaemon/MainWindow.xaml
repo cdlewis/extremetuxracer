@@ -1,8 +1,8 @@
 ﻿<Window x:Class="KinectDaemon.MainWindow"
 		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
 		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-		Title="MainWindow" Height="103" Width="600" Loaded="Window_Loaded" Closed="Window_Closed">
+		Title="MainWindow" Height="87" Width="502" Loaded="Window_Loaded" Closed="Window_Closed">
 	<Grid>
-		<Canvas Height="64" HorizontalAlignment="Left" Name="canvas1" VerticalAlignment="Top" Width="578" />
+		<Canvas Height="48" HorizontalAlignment="Left" Name="canvas1" VerticalAlignment="Top" Width="480" />
 	</Grid>
 </Window>
