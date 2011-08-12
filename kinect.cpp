@@ -26,6 +26,9 @@ bool CKinect::StartServer() {
 	m_packet = SDLNet_AllocPacket(512);
 	
 	if (!m_packet) {
+		SDLNet_UDP_Close(m_connection);
+		m_connection = NULL;
+		
 		fprintf(stderr, "SDLNet_AllocPacket: %s\n", SDLNet_GetError());
 		return false;
 	}
@@ -42,14 +45,22 @@ bool CKinect::StartServer() {
 
 void CKinect::StopServer() {
 	m_quit = true;
-	SDL_WaitThread(m_thread, NULL);
+	
+	if (m_thread) {
+		SDL_WaitThread(m_thread, NULL);
+	}
+	
 	SetAxis(0.0f, 0.0f);
 	
-	SDLNet_UDP_Close(m_connection);
-	m_connection = NULL;
+	if (m_connection) {
+		SDLNet_UDP_Close(m_connection);
+		m_connection = NULL;
+	}
 	
-	SDLNet_FreePacket(m_packet);
-	m_packet = NULL;
+	if (m_packet) {
+		SDLNet_FreePacket(m_packet);
+		m_packet = NULL;
+	}
 	
 	SDLNet_Quit();
 }
