@@ -1,7 +1,7 @@
 Extreme Tux Racer
 =================
 
-This is a fork of Extreme Tux Racer which supports Microsoft's Kinect sensor as an input device on the Windows platform. As Tux accelerates down the racetrack, the user can steer the penguin by tilting his or her head left or right; lean forward to paddle and backward to brake.
+This is a fork of Extreme Tux Racer which supports Microsoft's Kinect sensor as an input device on the Windows platform. As Tux accelerates down the racetrack, the user can steer the penguin by tilting his or her head left or right; lean forward to paddle and backward to brake. Watch a [video](http://www.vimeo.com/27603312) of this in action.
 
 Overview
 --------
